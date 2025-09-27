@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ApiGatewayF/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EurekaServerF/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/OrderServiceF/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/PaymentServiceF/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ProductServiceF/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/UserServiceF/src/main/java" charset="UTF-8" />
+  </component>
+</project>

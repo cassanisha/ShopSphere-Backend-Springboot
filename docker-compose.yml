@@ -1,0 +1,198 @@
+services:
+  # ---------------- EUREKA SERVER ----------------
+  eureka-server:
+    image: eurekaserver:latest
+    container_name: eureka-server
+    build:
+      context: ./EurekaServerF
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_PORT=8761
+    networks:
+      - microservices-network
+
+  # ---------------- REDIS ----------------
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - microservices-network
+
+  # ---------------- MYSQL DATABASES ----------------
+
+  # ---------------- KAFKA + ZOOKEEPER ----------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - microservices-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - microservices-network
+
+  # ---------------- PRODUCT SERVICE ----------------
+  product-service:
+    image: productservice:latest
+    container_name: product-service
+    build:
+      context: ./ProductServiceF
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      PRODUCT_PORT: 8081
+      EUREKA_URI: http://eureka-server:8761/eureka/
+      AUTH_SERVER_URI: http://user-service:8082/oauth2/jwks
+      REDIS_URI: redis
+      REDIS_PORT: 6379
+      PRODUCT_DB_URI: jdbc:mysql://host.docker.internal:3306/productdb
+      DB_USERNAME: dockeruser
+      DB_PASSWORD: password
+    depends_on:
+      - eureka-server
+      - redis
+    networks:
+      - microservices-network
+
+  # ---------------- USER SERVICE ----------------
+  user-service:
+    image: userservice:latest
+    container_name: user-service
+    build:
+      context: ./UserServiceF
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      USER_SERVICE_PORT: 8082
+      USER_DB_URI: jdbc:mysql://host.docker.internal:3306/userdb
+      DB_USERNAME: dockeruser
+      DB_PASSWORD: password
+      KAFKA_URI: kafka:9092
+      EUREKA_URI: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - kafka
+    networks:
+      - microservices-network
+
+  # ---------------- PAYMENT SERVICE ----------------
+  payment-service:
+    image: paymentservice:latest
+    container_name: payment-service
+    build:
+      context: ./PaymentServiceF
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      PAYMENT_PORT: 8083
+      PAYMENT_DB_URI: jdbc:mysql://host.docker.internal:3306/paymentdb
+      DB_USERNAME: dockeruser
+      DB_PASSWORD: password
+      EUREKA_URI: http://eureka-server:8761/eureka/
+      STRIPE_KEY: ${write you key here}
+      AUTH_SERVER_URI: http://user-service:8082/oauth2/token
+      ORDER_SERVICE_URL: http://order-service:8084
+      PAYMENT_SERVICE_CLIENT_ID: payment-service
+      PAYMENT_SERVICE_CLIENT_SECRET: paymentpass
+      KAFKA_URI: kafka:9092
+    depends_on:
+      - eureka-server
+      - order-service
+      - kafka
+    networks:
+      - microservices-network
+
+  # ---------------- ORDER SERVICE ----------------
+  order-service:
+    image: orderservice:latest
+    container_name: order-service
+    build:
+      context: ./OrderServiceF
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      ORDER_SERVICE_PORT: 8084
+      ORDER_DB_URI: jdbc:mysql://host.docker.internal:3306/orderdb
+      DB_USERNAME: dockeruser
+      DB_PASSWORD: password
+      AUTH_SERVER_URI: http://user-service:8082/oauth2/jwks
+      EUREKA_URI: http://eureka-server:8761/eureka/
+      KAFKA_URI: kafka:9092
+    depends_on:
+      - eureka-server
+      - kafka
+    networks:
+      - microservices-network
+
+  # ---------------- NOTIFICATION SERVICE ----------------
+  notification-service:
+    image: notificationservice:latest
+    container_name: notification-service
+    build:
+      context: ./NotificationServiceF
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      NOTIF_PORT: 8085
+      EUREKA_URI: http://eureka-server:8761/eureka/
+      KAFKA_URI: kafka:9092
+    depends_on:
+      - eureka-server
+      - kafka
+    networks:
+      - microservices-network
+
+  # ---------------- API GATEWAY ----------------
+  api-gateway:
+    image: apigateway:latest
+    container_name: api-gateway
+    build:
+      context: ./ApiGatewayF
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070"
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+      - product-service
+      - user-service
+      - payment-service
+      - order-service
+      - notification-service
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+
+volumes:
+  zookeeper-data:
