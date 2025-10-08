@@ -1,4 +1,4 @@
-```markdown
+
 # ShopSphere Backend
 
 ## Overview
@@ -76,6 +76,5 @@ Ensure ports required by each service are free on your host machine.
 
 Contributions are welcome! Please create issues for bugs or feature requests and submit pull requests for code improvements.
 
-```
-```
+
 
