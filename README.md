@@ -15,7 +15,7 @@ For a visual representation and high-level overview of the system, refer to the 
 ## Backend Demonstration
 
 A demonstration of the backend APIs and workflows is available here:
-[Backend Demo Video](https://github.com/user-attachments/assets/2aa03360-6077-4601-9079-f9f9fe4739c2)
+https://github.com/user-attachments/assets/2aa03360-6077-4601-9079-f9f9fe4739c2
 
 ## Environment Variables
 | Variable   | Description |
