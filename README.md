@@ -11,13 +11,20 @@ This project is containerized using Docker, and a `docker-compose.yml` file is p
 
 For a visual representation and high-level overview of the system, refer to the diagram below:
 [Architecture Explanation Video](https://github.com/user-attachments/assets/81b8abf7-7466-4acb-ab99-211472006693)
+https://github.com/user-attachments/assets/2aa03360-6077-4601-9079-f9f9fe4739c2
 
 ## Backend Demonstration
 
-A demonstration of the backend APIs and workflows is available here:
-https://github.com/user-attachments/assets/2aa03360-6077-4601-9079-f9f9fe4739c2
+A demonstration of the backend APIs and workflows is available here: 
+
+https://github.com/user-attachments/assets/c8994b9c-29ab-48f3-977f-d40f045e8396
+
 
 ## Environment Variables
+
+
+
+
 | Variable   | Description |
 |------------|-------------|
 | StripeKey  | sk_test_51S97PXQ9kTJpAJ41FQ3nqFrupHfpsmLr5r0Gr3ORxXkDSJOH0VVrBtrNquAPffmDOi7WlDB0WzYiHcZTTsfJANiJ009f7MDH0g |
