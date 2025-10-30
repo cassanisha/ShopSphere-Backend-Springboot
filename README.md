@@ -11,7 +11,7 @@ This project is containerized using Docker, and a `docker-compose.yml` file is p
 
 For a visual representation and high-level overview of the system, refer to the diagram below:
 [Architecture Explanation Video](https://github.com/user-attachments/assets/81b8abf7-7466-4acb-ab99-211472006693)
-https://github.com/user-attachments/assets/2aa03360-6077-4601-9079-f9f9fe4739c2
+
 
 ## Backend Demonstration
 
